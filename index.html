@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sebuah Pesan Untuk Ayunda</title>
+    <style>
+        /* Impor Font dari Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;700&display=swap');
+
+        /* Reset dan Basic Styling */
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #f8b195, #f67280, #c06c84, #6c5b7b, #355c7d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        /* Animasi untuk Background Gradien */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Kontainer Utama dengan Efek Kaca */
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            max-width: 90%;
+            width: 450px;
+            transform: scale(0);
+            animation: popIn 0.8s forwards ease-in-out;
+        }
+
+        /* Animasi untuk Kontainer */
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Judul dan Teks */
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #f0f0f0;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            min-height: 50px; /* Ruang untuk teks yang diketik */
+        }
+        
+        .typing-container {
+            min-height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #typing-text {
+            color: #fff;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1.2em;
+            background-color: #fff;
+            animation: blink 1s step-end infinite;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+            from, to { background-color: transparent; }
+            50% { background-color: #fff; }
+        }
+
+        /* Styling Tombol */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            position: relative;
+            height: 50px; /* Beri tinggi agar tombol lari tidak keluar */
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        #initialButton {
+            background: #ff7e5f;
+            color: white;
+        }
+
+        #initialButton:hover {
+            background: #feb47b;
+            transform: translateY(-2px);
+        }
+        
+        #yesButton {
+            background: #28a745;
+            color: white;
+        }
+
+        #yesButton:hover {
+            background: #218838;
+            transform: scale(1.1);
+        }
+        
+        #noButton {
+            background: #dc3545;
+            color: white;
+            position: absolute; /* Kunci untuk membuat tombol bisa bergerak */
+        }
+
+        /* Layar Tersembunyi */
+        .hidden {
+            display: none;
+        }
+
+        /* Styling Konfeti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0.7;
+            border-radius: 50%;
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Layar Awal -->
+    <div id="initial-screen" class="container">
+        <h1>Hai, Ayunda! ✨</h1>
+        <p>Aku punya sesuatu yang spesial buat kamu...</p>
+        <button id="initialButton">Buka Pesan</button>
+    </div>
+
+    <!-- Layar Pesan Utama (awalnya tersembunyi) -->
+    <div id="message-screen" class="container hidden">
+        <h1>Jujur, dari hatiku...</h1>
+        <div class="typing-container">
+            <p id="typing-text"></p><span class="cursor"></span>
+        </div>
+        <div id="question-container" class="hidden">
+            <p>Jadi, kamu mau jadi pacarku? 😳</p>
+            <div class="button-container">
+                <button id="yesButton">Mau Banget! ❤️</button>
+                <button id="noButton">Hmm, pikir-pikir dulu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layar Final (awalnya tersembunyi) -->
+    <div id="final-screen" class="container hidden">
+        <h1>YEEEY! I'm so happy! 🎉</h1>
+        <p>Makasih ya udah nerima. See you on our first date, Ayunda! 😉</p>
+    </div>
+    
+    <script>
+        // Ambil elemen dari DOM
+        const initialScreen = document.getElementById('initial-screen');
+        const messageScreen = document.getElementById('message-screen');
+        const finalScreen = document.getElementById('final-screen');
+        
+        const initialButton = document.getElementById('initialButton');
+        const yesButton = document.getElementById('yesButton');
+        const noButton = document.getElementById('noButton');
+
+        const typingTextElement = document.getElementById('typing-text');
+        const questionContainer = document.getElementById('question-container');
+
+        // Daftar pesan yang akan diketik
+        const messages = [
+            "Sejak pertama kali kenal...",
+            "Aku ngerasa ada yang beda.",
+            "Senyum kamu itu manis banget.",
+            "Caramu bicara bikin nyaman.",
+            "Dan aku sadar...",
+            "Aku suka sama kamu.",
+        ];
+
+        // Fungsi untuk efek mengetik
+        let messageIndex = 0;
+        let charIndex = 0;
+        function typeWriter() {
+            if (messageIndex < messages.length) {
+                if (charIndex < messages[messageIndex].length) {
+                    typingTextElement.textContent += messages[messageIndex].charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, 80); // Kecepatan mengetik
+                } else {
+                    // Tunggu sejenak sebelum beralih ke pesan berikutnya
+                    setTimeout(() => {
+                        messageIndex++;
+                        charIndex = 0;
+                        typingTextElement.textContent = '';
+                        typeWriter();
+                    }, 1500); // Jeda antar pesan
+                }
+            } else {
+                // Semua pesan sudah ditampilkan, tunjukkan pertanyaan dan tombol
+                document.querySelector('.cursor').style.display = 'none'; // Sembunyikan kursor
+                questionContainer.classList.remove('hidden');
+            }
+        }
+        
+        // Event Listener untuk Tombol "Buka Pesan"
+        initialButton.addEventListener('click', () => {
+            initialScreen.style.display = 'none';
+            messageScreen.classList.remove('hidden');
+            // Mulai efek mengetik setelah layar pesan muncul
+            typeWriter();
+        });
+        
+        // Event Listener untuk Tombol "Nggak" yang Usil
+        noButton.addEventListener('mouseover', () => {
+            const container = document.querySelector('.button-container');
+            const containerRect = container.getBoundingClientRect();
+            const buttonRect = noButton.getBoundingClientRect();
+            
+            // Buat posisi acak di dalam kontainer
+            const newTop = Math.random() * (containerRect.height - buttonRect.height);
+            const newLeft = Math.random() * (containerRect.width - buttonRect.width);
+
+            noButton.style.top = `${newTop}px`;
+            noButton.style.left = `${newLeft}px`;
+        });
+        
+        // Event Listener untuk Tombol "Mau Banget!"
+        yesButton.addEventListener('click', () => {
+            messageScreen.style.display = 'none';
+            finalScreen.classList.remove('hidden');
+            // Panggil fungsi konfeti
+            createConfetti();
+        });
+        
+        // Fungsi untuk Membuat Konfeti
+        function createConfetti() {
+            const colors = ['#f8b195', '#f67280', '#c06c84', '#6c5b7b', '#ffeb3b', '#4caf50'];
+            for (let i = 0; i < 200; i++) { // Jumlah konfeti
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                const size = Math.random() * 10 + 5;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                
+                // Posisi awal dari tengah layar
+                confetti.style.left = `${window.innerWidth / 2}px`;
+                confetti.style.top = `${window.innerHeight / 2}px`;
+
+                // Arah jatuh acak
+                const x = (Math.random() - 0.5) * window.innerWidth * 1.5;
+                const y = (Math.random() + 0.5) * window.innerHeight;
+                confetti.style.transform = `translateX(${x}px) rotate(${Math.random() * 360}deg)`;
+                
+                document.body.appendChild(confetti);
+                
+                // Hapus konfeti dari DOM setelah animasi selesai
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+
+    </script>
+</body>
+</html>
